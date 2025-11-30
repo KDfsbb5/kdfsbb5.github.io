@@ -32,20 +32,20 @@
       <p class="text-base mt-3 opacity-90">いい（11）み（3）りん（0）の語呂合わせ！<br>今日は料理にみりんドバドバOK！</p>
     </div>
 
-    <!-- 天気（はみ出し完全解決！） -->
+    <!-- 天気（はみ出し調整済み） -->
     <div class="bg-white/10 rounded-3xl p-5 mb-8">
       <h2 class="text-2xl font-bold mb-5">東京の天気</h2>
       <div class="grid grid-cols-2 gap-4">
         <div class="bg-white/20 rounded-2xl weather-card">
           <p class="text-lg font-bold mb-1">今日 日曜</p>
-          <p class="text-4xl my-2">Sunny</p>
-          <p class="text-xl">18℃ / 10℃</p>
+          <p class="text-3xl my-2">Sunny</p>
+          <p class="text-lg">18℃ / 10℃</p>
           <p class="text-sm mt-2 opacity-80">晴れ時々曇り</p>
         </div>
         <div class="bg-white/20 rounded-2xl weather-card">
           <p class="text-lg font-bold mb-1">明日 月曜</p>
-          <p class="text-4xl my-2">Cloudy</p>
-          <p class="text-xl">16℃ / 11℃</p>
+          <p class="text-3xl my-2">Cloudy</p>
+          <p class="text-lg">16℃ / 11℃</p>
           <p class="text-sm mt-2 opacity-80">曇り一時雨</p>
         </div>
       </div>
@@ -67,14 +67,25 @@
       fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?range=1d').then(r=>r.json()).then(d=>document.getElementById('nikkei').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(0));
     </script>
 
-    <!-- Xトレンド -->
-    <div class="bg-white/10 rounded-3xl p-6 mb-8">
-      <h2 class="text-2xl font-bold mb-5">Xトレンド</h2>
+    <!-- Xトレンド（日本国内） -->
+    <div class="bg-white/10 rounded-3xl p-6 mb-6">
+      <h2 class="text-2xl font-bold mb-5">🇯🇵 日本国内トレンド</h2>
       <div class="space-y-3 text-left">
-        <a href="https://x.com/search?q=Hyunjin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">#Hyunjin MAMAソロ</a>
-        <a href="https://x.com/search?q=Bitcoin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">Bitcoin $94K</a>
-        <a href="https://x.com/search?q=%24MASK&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">$MASK drawing</a>
+        <a href="https://x.com/search?q=YOASOBI&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">YOASOBIの10大ドームツアー発表！アジア5都市も🔥</a>
+        <a href="https://x.com/search?q=%E4%B8%8D%E7%A0%B4%E6%B9%8A3D%E3%83%A9%E3%82%A4%E3%83%96&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">不破湊3Dライブ完走！伝説のホストたちに感謝✨</a>
+        <a href="https://x.com/search?q=%E3%81%82%E3%81%84%E3%81%BF%E3%82%87%E3%82%93&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">あいみょんメジャーデビュー9周年！髪切った新ビジュアル🌷</a>
       </div>
+    </div>
+
+    <!-- Xトレンド（海外・日本語訳） -->
+    <div class="bg-white/10 rounded-3xl p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-5">🌍 海外トレンド（日本語訳）</h2>
+      <div class="space-y-3 text-left">
+        <a href="https://x.com/search?q=Hyunjin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">Hyunjin MAMAソロステージ（ヒョンジンMAMAソロステージがXで大バズ！K-Popの新時代？）</a>
+        <a href="https://x.com/search?q=Bitcoin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">Bitcoin $94K（ビットコインが94,000ドルに下落！市場の変動が話題）</a>
+        <a href="https://x.com/search?q=%24MASK&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">$MASK drawing trend（$MASKドローイングトレンド：Frieren風イラストが21MビューでAIアート論争）</a>
+      </div>
+      <p class="text-sm opacity-70 mt-3">※海外トレンドはGrokニュース風に翻訳・解説（英語原文: Hyunjin, Bitcoin, $MASK）</p>
     </div>
 
     <!-- バカゲー誘導 -->
@@ -92,7 +103,7 @@
     </div>
 
     <footer class="text-gray-400 py-8 text-sm">
-      © 2025 バカトレンドハブ スマホ版（超安定仕様）
+      © 2025 バカトレンドハブ スマホ版（トレンド分離仕様）
     </footer>
   </div>
 </body>
