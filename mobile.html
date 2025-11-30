@@ -24,13 +24,41 @@
       バカトレンドハブ
     </h1>
 
-    <!-- 今日は何の日？ -->
-    <div class="bg-white/10 rounded-3xl p-6 mb-8">
-      <h2 class="text-2xl font-bold mb-3">今日は何の日？</h2>
-      <p class="text-3xl mb-2">11月30日</p>
+<!-- これを「今日は何の日？」の部分に丸ごと置き換え -->
+<div class="bg-white/10 rounded-3xl p-6 mb-8">
+  <h2 class="text-2xl font-bold mb-3">今日は何の日？</h2>
+  <div id="today-event" class="text-center">
+    <p class="text-4xl">読み込み中...</p>
+  </div>
+</div>
+
+<script>
+// 今日の日付を取得（例: 11月30日 → 11/30）
+const today = new Date();
+const month = today.getMonth() + 1;
+const day = today.getDate();
+
+// Wikipediaの「○月○日」ページから自動取得
+fetch(`https://ja.wikipedia.org/api/rest_v1/page/summary/${month}月${day}日`)
+  .then(r => r.json())
+  .then(data => {
+    const title = data.titles.normalized || "今日は何の日？";
+    const desc = data.extract || "今日は特別な日です！";
+    document.getElementById('today-event').innerHTML = `
+      <p class="text-3xl mb-2">${month}月${day}日</p>
+      <p class="text-2xl font-bold mb-3">${title}</p>
+      <p class="text-base opacity-90">${desc.split('。')[0]}。</p>
+    `;
+  })
+  .catch(() => {
+    // 失敗しても安心のフォールバック
+    document.getElementById('today-event').innerHTML = `
+      <p class="text-3xl mb-2">${month}月${day}日</p>
       <p class="text-2xl font-bold">本みりんの日</p>
-      <p class="text-base mt-3 opacity-90">いい（11）み（3）りん（0）の語呂合わせ！<br>今日は料理にみりんドバドバOK！</p>
-    </div>
+      <p class="text-base opacity-90">いい（11）み（3）りん（0）の語呂合わせ！</p>
+    `;
+  });
+</script>
 
     <!-- 天気（はみ出し調整済み） -->
     <div class="bg-white/10 rounded-3xl p-5 mb-8">
