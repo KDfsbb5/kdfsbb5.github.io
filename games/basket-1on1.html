@@ -7,23 +7,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
   <style>
-    body { margin: 0; background: linear-gradient(#87CEEB, #228B22); overflow: hidden; font-family: sans-serif; }
-    canvas { display: block; margin: 20px auto; border: 5px solid #FFD700; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-    #ui { position: absolute; top: 20px; left: 20px; color: white; font-size: 28px; text-shadow: 2px 2px 4px black; }
-    #char-select { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; text-align: center; color: white; }
-    button { padding: 10px 20px; margin: 10px; background: #FFD700; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; }
-    button:hover { background: #FFA500; }
+    body { margin: 0; background: linear-gradient(to bottom, #87CEEB 0%, #228B22 100%); overflow: hidden; font-family: sans-serif; }
+    canvas { display: block; margin: 20px auto; border: 8px solid #FFD700; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); cursor: none; }
+    #ui { position: absolute; top: 20px; left: 20px; right: 20px; color: white; font-size: 32px; text-shadow: 3px 3px 6px black; text-align: center; }
+    #char-select { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border-radius: 30px; text-align: center; color: white; z-index: 100; }
+    button { padding: 15px 25px; margin: 10px; background: linear-gradient(#FFD700, #FFA500); border: none; border-radius: 20px; font-size: 20px; cursor: pointer; font-weight: bold; }
+    button:hover { transform: scale(1.1); }
   </style>
 </head>
 <body>
-  <canvas id="canvas" width="800" height="500"></canvas>
-  <div id="ui">スコア: 0 - 0</div>
+  <canvas id="canvas" width="900" height="600"></canvas>
+  <div id="ui">キャラ選択中... | スコア: 0 - 0 | 先取15点勝ち！</div>
   <div id="char-select">
-    <h2 class="text-3xl mb-4">キャラ選択！</h2>
-    <button onclick="selectChar(0)">チビ速 (スピード)</button>
-    <button onclick="selectChar(1)">スナイパー後藤 (シューター)</button>
-    <button onclick="selectChar(2)">普通くん (バランス)</button>
-    <button onclick="selectChar(3)">ゴリラ山崎 (パワー)</button>
+    <h2 class="text-4xl mb-8">🏀 キャラ選択！</h2>
+    <button onclick="selectChar(0)">⚡ チビ速 (速ドリブル)</button><br>
+    <button onclick="selectChar(1)">🎯 スナイパー後藤 (3P神)</button><br>
+    <button onclick="selectChar(2)">⚖️ 普通くん (バランス)</button><br>
+    <button onclick="selectChar(3)">💪 ゴリラ山崎 (ダンク王)</button>
   </div>
 
   <script>
@@ -32,147 +32,139 @@
     const ui = document.getElementById('ui');
     const charSelect = document.getElementById('char-select');
 
-    // キャラデータ
+    // キャラデータ (強化版)
     const chars = [
-      {name: 'チビ速', speed: 8, jump: 18, shoot: 15, dunk: false, color: '#FF4444', anim: ['走る', 'ジャンプ', 'シュート']},
-      {name: 'スナイパー後藤', speed: 5, jump: 16, shoot: 20, dunk: false, color: '#44AA44', anim: ['スタンド', 'シュート']},
-      {name: '普通くん', speed: 6, jump: 17, shoot: 16, dunk: false, color: '#4444FF', anim: ['走る', 'シュート']},
-      {name: 'ゴリラ山崎', speed: 4, jump: 20, shoot: 12, dunk: true, color: '#FF8800', anim: ['ゴリ押し', 'ダンク']}
+      {name: 'チビ速', speed: 9, jump: 16, shootPower: 14, threePt: 0.5, dunkPower: 0, color: '#FF4444'},
+      {name: 'スナイパー後藤', speed: 5, jump: 14, shootPower: 22, threePt: 0.85, dunkPower: 0, color: '#44AA44'},
+      {name: '普通くん', speed: 6.5, jump: 17, shootPower: 16, threePt: 0.6, dunkPower: 0.3, color: '#4444FF'},
+      {name: 'ゴリラ山崎', speed: 4, jump: 22, shootPower: 12, threePt: 0.2, dunkPower: 1, color: '#FF8800'}
     ];
 
-    let player, ai, ball, score = {p:0, a:0}, selected = false, gameStart = false;
+    let player = {}, ai = {}, ball = {}, score = {p: 0, a: 0};
+    let gameRunning = false, shootCharge = 0, keys = {};
 
-    const keys = {};
-    document.addEventListener('keydown', e => keys[e.key] = true);
-    document.addEventListener('keyup', e => keys[e.key] = false);
+    document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+    document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
     function selectChar(index) {
-      player = {...chars[index], x:100, y:400, vx:0, vy:0, hasBall:true};
-      ai = {...chars[Math.floor(Math.random()*4)], x:700, y:400, vx:0, vy:0, hasBall:false};
-      ball = {x:player.x+20, y:player.y-30, vx:0, vy:0, r:12};
+      player = { ...chars[index], x: 150, y: 450, vx: 0, vy: 0, onGround: true, hasBall: true };
+      ai = { ...chars[Math.floor(Math.random() * 4)], x: 700, y: 450, vx: 0, vy: 0, onGround: true, hasBall: false };
+      ball = {x: player.x, y: player.y - 40, vx: 0, vy: 0, r: 15, held: true};
       charSelect.style.display = 'none';
-      gameStart = true;
+      gameRunning = true;
+      ui.textContent = `${player.name} vs ${ai.name} | スコア: 0 - 0 | 先取15点！`;
       loop();
     }
 
     function drawCourt() {
       ctx.fillStyle = '#8B4513';
-      ctx.fillRect(0,0,800,500);
+      ctx.fillRect(0, 0, 900, 600);
       ctx.strokeStyle = '#FFF';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(50,100,700,300);
-      ctx.beginPath(); ctx.arc(400,250,50,0,Math.PI*2); ctx.stroke();
+      ctx.lineWidth = 6;
+      ctx.strokeRect(60, 120, 780, 360);
+      ctx.beginPath(); ctx.arc(450, 300, 70, 0, Math.PI*2); ctx.stroke();
+      // リング&バックボード
       ctx.fillStyle = '#FFD700';
-      ctx.fillRect(380,240,40,10); // リング
-      ctx.fillRect(380,200,10,40); // バックボード
+      ctx.fillRect(420, 285, 60, 8); // リング
+      ctx.fillRect(400, 220, 20, 70); // ボード
     }
 
-    function drawPlayer(p, isPlayer) {
+    function drawChar(p, flip = false) {
+      const sx = flip ? -1 : 1;
+      ctx.save();
+      ctx.scale(sx, 1);
       ctx.fillStyle = p.color;
-      ctx.fillRect(p.x-20, p.y-60, 40, 60); // 体
+      ctx.fillRect(Math.abs(p.x - 25), p.y - 70, 50, 70); // 体
       ctx.fillStyle = '#FFF';
-      ctx.font = 'bold 16px sans-serif';
-      ctx.fillText(p.name, p.x-30, p.y-70);
-      if (p.hasBall) {
-        ctx.fillStyle = '#FFA500';
-        ctx.beginPath(); ctx.arc(p.x+20, p.y-30, 12,0,Math.PI*2); ctx.fill();
-      }
+      ctx.fillRect(Math.abs(p.x - 10), p.y - 50, 20, 20); // 頭
+      ctx.fillStyle = '#000';
+      ctx.fillRect(Math.abs(p.x - 5), p.y - 45, 4, 4); // 目
+      ctx.font = 'bold 18px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.name, Math.abs(p.x), p.y - 85);
+      ctx.restore();
+    }
+
+    function drawBall() {
+      ctx.fillStyle = '#FFAA00';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = '#FFF';
+      ctx.lineWidth = 3;
+      ctx.stroke();
     }
 
     function updatePlayer() {
-      if (keys['ArrowLeft']) player.vx = -player.speed;
-      if (keys['ArrowRight']) player.vx = player.speed;
-      if (keys['ArrowUp'] && player.vy === 0) player.vy = -player.jump;
-      if (keys['z'] && player.hasBall) { // パス
-        ball.vx = (ai.x - player.x) / 50;
-        ball.vy = -5;
+      player.vx *= 0.85; // 摩擦
+      if (keys['arrowleft']) player.vx = -player.speed;
+      if (keys['arrowright']) player.vx = player.speed;
+      if (keys['arrowup'] && player.onGround) { player.vy = -player.jump; player.onGround = false; }
+
+      // シュートチャージ (Xキー)
+      if (keys['x']) {
+        shootCharge = Math.min(shootCharge + 1, 30);
+      } else if (shootCharge > 0) {
+        ball.vx = (450 - player.x) / 40 + (Math.random() - 0.5) * 2;
+        ball.vy = - (player.shootPower + shootCharge * 0.5);
+        ball.held = false;
         player.hasBall = false;
-        ai.hasBall = true;
+        shootCharge = 0;
       }
-      if (keys['x'] && player.hasBall && player.vy === 0) { // シュート
-        ball.vx = (400 - player.x) / 50 + (Math.random()-0.5)*2;
-        ball.vy = -player.shoot - (400 - player.x)/100;
-        player.hasBall = false;
-      }
-      if (keys[' '] && player.hasBall && player.dunk && Math.abs(player.x-400)<50) { // ダンク
-        ball.vy = -5;
-        score.p += 2;
-        resetBall();
-      }
+
+      // 物理
       player.x += player.vx;
       player.y += player.vy;
-      player.vy += 0.8; // 重力
-      if (player.y >= 400) { player.y = 400; player.vy = 0; }
-      player.x = Math.max(0, Math.min(800, player.x));
-      if (player.hasBall) { ball.x = player.x+20; ball.y = player.y-30; }
+      player.vy += 1;
+      if (player.y >= 450) { player.y = 450; player.vy = 0; player.onGround = true; }
+      player.x = Math.max(40, Math.min(860, player.x));
+
+      if (player.hasBall && ball.held) {
+        ball.x = player.x;
+        ball.y = player.y - 40;
+        ball.y += Math.sin(Date.now() / 100) * 2; // ドリブルバウンド
+      }
     }
 
     function updateAI() {
-      // AI追従
-      ai.vx = (player.x - ai.x > 0 ? 1 : -1) * ai.speed * 0.7;
-      if (Math.random() < 0.02 && ai.hasBall) {
-        ball.vx = (400 - ai.x)/50 + (Math.random()-0.5)*3;
-        ball.vy = -ai.shoot;
+      // AIロジック強化
+      const dx = player.x - ai.x;
+      ai.vx = Math.sign(dx) * ai.speed * 0.6;
+      if (Math.random() < 0.01 && ai.hasBall) {
+        ball.vx = (450 - ai.x) / 40;
+        ball.vy = -ai.shootPower;
         ai.hasBall = false;
+        ball.held = false;
       }
       ai.x += ai.vx;
       ai.y += ai.vy;
-      ai.vy += 0.8;
-      if (ai.y >= 400) { ai.y = 400; ai.vy = 0; }
-      if (ai.hasBall) { ball.x = ai.x-20; ball.y = ai.y-30; }
+      ai.vy += 1;
+      if (ai.y >= 450) { ai.y = 450; ai.vy = 0; ai.onGround = true; }
+      ai.x = Math.max(40, Math.min(860, ai.x));
+
+      if (ai.hasBall && ball.held) ball.x = ai.x;
     }
 
     function updateBall() {
-      if (!player.hasBall && !ai.hasBall) {
+      if (!ball.held) {
         ball.x += ball.vx;
         ball.y += ball.vy;
         ball.vy += 0.8;
-
-        // バウンド
-        if (ball.y > 480) { ball.y = 480; ball.vy *= -0.7; ball.vx *= 0.8; }
-
-        // リング衝突
-        if (ball.y > 240 && ball.y < 260 && ball.x > 380 && ball.x < 420 && ball.vy > 0) {
-          if (Math.abs(ball.vx) < 3) { // 成功
-            score[player.hasBall ? 'a' : 'p'] += (Math.abs(ball.vx) < 1 ? 3 : 2);
-            ui.textContent = `スコア: ${score.p} - ${score.a}`;
-            resetBall();
-            if (score.p >= 15 || score.a >= 15) alert(`${score.p >= 15 ? '勝ったぜ！' : '負けた...'} リスタート！`);
-          } else { // リムに当たる
-            ball.vx *= -0.5;
-            ball.vy *= -0.5;
-          }
+        if (ball.y > 580) {
+          ball.y = 580;
+          ball.vy *= -0.7;
+          ball.vx *= 0.85;
         }
 
-        // 奪い合い
-        if (Math.abs(ball.x - player.x) < 40 && Math.abs(ball.y - player.y) < 40 && !ai.hasBall) player.hasBall = true;
-        if (Math.abs(ball.x - ai.x) < 40 && Math.abs(ball.y - ai.y) < 40 && !player.hasBall) ai.hasBall = true;
-      }
-    }
+        // スティール判定
+        if (Math.hypot(ball.x - player.x, ball.y - player.y) < 40 && !player.hasBall) player.hasBall = true;
+        if (Math.hypot(ball.x - ai.x, ball.y - ai.y) < 40 && !ai.hasBall) ai.hasBall = true;
 
-    function resetBall() {
-      ball.x = 400; ball.y = 200; ball.vx = 0; ball.vy = 0;
-      player.hasBall = true; ai.hasBall = false;
-    }
-
-    function loop() {
-      if (!gameStart) return;
-      ctx.clearRect(0,0,800,500);
-      drawCourt();
-      drawPlayer(player);
-      drawPlayer(ai, false);
-      updatePlayer();
-      updateAI();
-      updateBall();
-      requestAnimationFrame(loop);
-    }
-
-    // AdSense
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-
-  <!-- 下部広告 -->
-  <ins class="adsbygoogle" style="display:block; margin:20px auto;" data-ad-format="auto" data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</body>
-</html>
+        // ゴール判定 (リアル)
+        if (ball.y > 280 && ball.y < 295 && ball.x > 420 && ball.x < 480 && ball.vy > 0) {
+          const is3pt = ball.x < 300 || ball.x > 600;
+          const points = is3pt ? 3 : 2;
+          const scorer = player.hasBall ? 'p' : 'a';
+          score[scorer] += points;
+          ui.textContent = `${player.name} vs ${ai.name} | スコア: ${score.p} - ${score.a}`;
+          if (score.p >=
