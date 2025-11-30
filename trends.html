@@ -27,22 +27,26 @@
         <!-- JSで自動挿入 -->
       </div>
       <script>
-        // Xトレンドサンプル (本番はX APIで置き換え: fetch('https://api.twitter.com/2/trends/place?id=1', {headers: {Authorization: 'Bearer YOUR_TOKEN'}}))
-        const trends = [
-          '#BNewEraBirthdayConcert: タイのコンサート熱狂！',
-          '#Hyunjin: MAMAソロステージが155Kポストで爆トレンド',
-          '#LoveXReality: 新ドラマのラブストーリーが話題',
-          'AI hacks: みんなが"発明したふり"してるAIトリック',
-          '$MASK drawing trend: Frieren風イラストが21Mビュー'
-        ];
-        const trendsEl = document.getElementById('trends');
-        trends.forEach(t => {
-          const div = document.createElement('div');
-          div.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition';
-          div.innerHTML = `<h3 class="font-bold text-lg">${t}</h3><a href="https://x.com/search?q=${encodeURIComponent(t)}" target="_blank" class="text-blue-500">Xでチェック</a>`;
-          trendsEl.appendChild(div);
-        });
-        // 自動更新: setIntervalで1時間ごとリロード or APIコール
+        async function fetchTrends() {
+          const token = 'YOUR_BEARER_TOKEN'; // X Developerから取得[](https://developer.x.com/en/docs/twitter-api/getting-started/getting-access-to-the-twitter-api)
+          const response = await fetch('https://api.twitter.com/1.1/trends/place.json?id=1', { // id=1 for worldwide
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await response.json();
+          const trends = data[0].trends.slice(0, 10); // トップ10
+          const trendsEl = document.getElementById('trends');
+          trendsEl.innerHTML = ''; // クリア
+          trends.forEach(t => {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition';
+            const encodedTrend = encodeURIComponent(t.name);
+            div.innerHTML = `<h3 class="font-bold text-lg">${t.name} (${t.tweet_volume ? t.tweet_volume + 'ポスト' : '人気急上昇'})</h3>
+              <a href="https://x.com/search?q=${encodedTrend}&src=trend_click&vertical=trends" target="_blank" class="text-blue-500">ポスト一覧にジャンプ</a>`;
+            trendsEl.appendChild(div);
+          });
+        }
+        fetchTrends(); // 初回ロード
+        setInterval(fetchTrends, 3600000); // 1時間更新
       </script>
     </section>
 
@@ -50,34 +54,29 @@
     <section class="mb-12">
       <h2 class="text-3xl font-bold text-purple-600 mb-4">🌍 Grokニュース: 海外ハイライト</h2>
       <div id="news" class="space-y-4">
-        <!-- JSサンプル (本番: XのGrokポストRSS or semantic search) -->
+        <!-- スタティック例 (本番: x_semantic_search APIで自動化可能) -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-800">HyunjinのMAMAソロがXで大バズ！ K-Popの新時代？</p>
+          <a href="https://x.com/search?q=Hyunjin&src=trend_click&vertical=trends" target="_blank" class="text-purple-500">ポスト一覧にジャンプ</a>
+        </div>
+        <!-- 追加で4件（ツール結果から） -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-800">Bitcoin falls to $94,000 – 市場の変動</p>
+          <a href="https://x.com/search?q=Bitcoin&src=trend_click&vertical=trends" target="_blank" class="text-purple-500">ポスト一覧にジャンプ</a>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-800">Trump removes tariffs on some groceries</p>
+          <a href="https://x.com/search?q=Trump&src=trend_click&vertical=trends" target="_blank" class="text-purple-500">ポスト一覧にジャンプ</a>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-800">$MASK drawing trend: AIアート論争</p>
+          <a href="https://x.com/search?q=$MASK&src=trend_click&vertical=trends" target="_blank" class="text-purple-500">ポスト一覧にジャンプ</a>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-800">Optimus will eliminate poverty – Elon Musk</p>
+          <a href="https://x.com/search?q=Optimus&src=trend_click&vertical=trends" target="_blank" class="text-purple-500">ポスト一覧にジャンプ</a>
+        </div>
       </div>
-      <script>
-        const news = [
-          'HyunjinのMAMAソロがXで大バズ！ K-Popの新時代？ (出典: Xトレンド)',
-          'RailsがX検索で支配！ ブロックチェーン革命の兆し？',
-          'Frieren drawing trendが21Mビュー: AIアート vs 手描き論争熱く',
-          'グローバルAIハックス: ポップコーン片手に楽しむドラマ満載',
-          'Belle Marianoの台北ショー: フィリピンアイドルがアジア制覇？'
-        ];
-        const newsEl = document.getElementById('news');
-        news.forEach(n => {
-          const div = document.createElement('div');
-          div.className = 'bg-white p-6 rounded-2xl shadow-lg';
-          div.innerHTML = `<p class="text-gray-800">${n}</p><a href="https://x.com/search?q=${encodeURIComponent(n.split(':')[0])}" target="_blank" class="text-purple-500">詳細 on X</a>`;
-          newsEl.appendChild(div);
-        });
-      </script>
-    </section>
-
-    <!-- キュレーション記事例 -->
-    <section class="mb-12">
-      <h2 class="text-3xl font-bold text-gray-800 mb-4">📝 俺のキュレーション: 今日のピック</h2>
-      <article class="bg-white p-6 rounded-2xl shadow-lg">
-        <h3 class="text-2xl font-bold mb-2">Xトレンドから見る2025のエンタメ未来</h3>
-        <p>#Hyunjinのソロが示すK-Popの進化... 海外ニュースの裏側を深掘り！</p>
-        <a href="#trends" class="text-blue-500">もっと読む</a>
-      </article>
     </section>
 
     <!-- AdSense 下部 -->
