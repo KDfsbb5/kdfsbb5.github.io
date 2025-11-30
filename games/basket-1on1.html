@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>バカストリートボール 1on1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { margin:0; background:#ff6; font-family:sans-serif; overflow:hidden; }
+  canvas { display:block; margin:0 auto; background:linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%); }
+</style>
+</head>
+<body class="bg-gradient-to-b from-orange-100 to-yellow-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <h1 class="text-5xl md:text-7xl font-black text-center mb-8 bg-gradient-to-r from-red-600 to-yellow-500 bg-clip-text text-transparent drop-shadow-2xl">
+    ">
+    バカストリートボール 1on1
+  </h1>
+  <canvas id="c" width="800" height="500"></canvas>
+  <div class="mt-6 text-2xl font-bold text-gray-800">矢印キー移動・スペースでシュート　先取10点勝ち！</div>
+
+<script>
+// === 超シンプル1on1バスケ（完全コピペで動く）===
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let keys = {};
+
+// プレイヤー選択（後でボタンにするけど今は固定）
+const players = [
+  {name:"チビ速", color:"#ff4444", speed:7, shootPower:4, height:30, dunk: false},
+  {name:"スナイパー後藤さん", color:"#44aa44", speed:4.5, shootPower:8, height:40, dunk: false},
+  {name:"普通くん", color:"#4444ff", speed:5.5, shootPower:6, height:35, dunk: false},
+  {name:"ゴリラ山崎", color:"#ff8800", speed:3, shootPower:2, height:60, dunk: true}
+];
+let p = players[0]; // とりあえずチビ速でスタート（後で選べるようにする）
+
+let ball = {x:400, y:200, vx:0, vy:0, holder:null};
+let ai = {x:600, y:250, targetX:600};
+let score = {player:0, ai:0};
+let gameState = "serve"; // serve, playing
+
+function resetBall() {
+  ball.x = 400; ball.y = 100; ball.vx = 0; ball.vy = 0;
+  ball.holder = Math.random()<0.5 ? "player" : "ai";
+}
+
+function drawCourt() {
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(0,0,800,500);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(50,100,700,300);
+  ctx.beginPath(); ctx.arc(400,250,60,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle = "#ffdd00";
+  ctx.fillRect(350,230,100,4); // リング
+}
+
+function drawPlayer(x,y,h,color,name) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x-20, y-h, 40, h);
+  ctx.fillStyle = "black";
+  ctx.fillText(name, x-25, y-h-10);
+}
+
+function update() {
+  if (gameState === "serve") {
+    resetBall();
+    gameState = "playing";
+  }
+
+  // プレイヤー移動
+  if (keys.ArrowLeft) p.x -= p.speed;
+  if (keys.ArrowRight) p.x += p.speed;
+  if (keys.ArrowUp) p.y -= p.speed;
+  if (keys.ArrowDown) p.y += p.speed;
+  p.x = Math.max(30, Math.min(770, p.x));
+  p.y = Math.max(50, Math.min(450, p.y));
+
+  // ボール持ってる？
+  if (ball.holder === "player") {
+    ball.x = p.x;
+    ball.y = p.y - 40;
+    if (keys[" "]) { // スペースでシュート
+      let dx = Math.random()*4-2;
+      ball.vx = (Math.random()<0.3 && p.dunk && Math.abs(p.x-400)<80) ? 0 : dx;
+      ball.vy = -12 - p.shootPower;
+      ball.holder = null;
+      keys[" "] = false;
+    }
+  }
+
+  // AI簡単ロジック
+  if (ball.holder === "ai") {
+    ai.x += (ball.x - ai.x) * 0.05;
+    if (Math.abs(ai.x - 400) < 100 && Math.random()<0.03) {
+      ball.vx = (Math.random()-0.5)*6;
+      ball.vy = -14;
+      ball.holder = null;
+    }
+  } else {
+    ai.x += (p.x - ai.x) * 0.03;
+  }
+
+  // ボール物理
+  if (!ball.holder) {
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    ball.vy += 0.5; // 重力
+    if (ball.y > 480) { // 地面
+      ball.vy *= -0.6;
+      ball.vx *= 0.8;
+    }
+    // ゴール判定（超簡易）
+    if (ball.y > 220 && ball.y < 260 && ball.x > 350 && ball.x < 450 && ball.vy > 0) {
+      if (ball.holder !== "player" && Math.random() < 0.7) {
+        score.player++;
+        alert("プレイヤー得点！ " + score.player + "-" + score.ai);
+        resetBall();
+      } else {
+        score.ai++;
+        alert("AI得点… " + score.player + "-" + score.ai);
+        resetBall();
+      }
+      if (score.player >= 10 || score.ai >= 10) {
+        alert((score.player >= 10 ? "お前"の勝利！！" : "ゴリラ山崎に負けた…"));
+        score = {player:0, ai:0};
+      }
+    }
+  }
+
+  // 描画
+  drawCourt();
+  drawPlayer(p.x, p.y, p.height, p.color, p.name);
+  drawPlayer(ai.x, 450, 50, "#888", "敵");
+  ctx.fillStyle = "#ffaa00";
+  ctx.beginPath(); ctx.arc(ball.x, ball.y, 15, 0, Math.PI*2); ctx.fill();
+
+  requestAnimationFrame(update);
+}
+
+// キー操作
+onkeydown = e => keys[e.key] = true;
+onkeyup   = e => keys[e.key] = false;
+
+// プレイヤー初期位置
+p.x = 200; p.y = 250;
+
+// スタート
+resetBall();
+update();
+</script>
+</body>
+</html>
