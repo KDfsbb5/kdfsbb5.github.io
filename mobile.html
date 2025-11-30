@@ -5,116 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>バカトレンドハブ スマホ版</title>
   <meta name="theme-color" content="#7c3aed">
-  <link rel="manifest" href="data:application/manifest+json,{\"name\":\"バカトレンドハブ\",\"short_name\":\"バカトレ\",\"start_url\":\"/mobile.html\",\"display\":\"standalone\",\"background_color\":\"#1e1b4b\",\"theme_color\":\"#7c3aed\"}">
   <script src="https://cdn.tailwindcss.com"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
   <style>
-    body { margin:0; background: linear-gradient(to bottom, #1e1b4b, #4c1d95); color:white; font-family: system-ui, sans-serif; }
-    img { max-width:100%; height:auto; border-radius:16px; }
+    body { margin:0; background:#1a0033; color:white; font-family:system-ui,sans-serif; min-height:100vh; }
   </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="text-center">
 
-  <!-- 上部広告 -->
-  <div class="p-4">
+  <!-- 広告 -->
+  <div class="p-3 bg-black/30">
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9720843068756495" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
-  <!-- ヘッダー画像 -->
-  <div class="text-center px-4">
-    <h1 class="text-5xl font-black my-6 bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+  <div class="p-6">
+    <h1 class="text-5xl font-black mb-8 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
       バカトレンドハブ
     </h1>
-    <img src="https://source.unsplash.com/random/1080x720/?tokyo,night,neon,japan,kawaii" 
-         alt="今日の東京" class="w-full rounded-3xl shadow-2xl">
-  </div>
 
-  <!-- 今日は何の日？（毎日変わる豆知識） -->
-  <div class="mx-4 my-8 bg-white/15 backdrop-blur-xl rounded-3xl p-6 text-center">
-    <h2 class="text-3xl font-bold mb-4">今日は何の日？</h2>
-    <p class="text-5xl mb-4">11月30日は「本みりんの日」</p>
-    <p class="text-lg opacity-90">みりんの語呂合わせ「いい（11）み（3）りん（0）」から。今日だけは料理にみりんドバドバ入れていい日！</p>
-    <p class="text-sm mt-4 opacity-70">※明日は12/1「映画の日」だよ！</p>
-  </div>
-
-  <!-- 天気（最高/最低＋曜日修正済み） -->
-  <div class="mx-4 mb-8 bg-white/15 backdrop-blur-xl rounded-3xl p-6">
-    <h2 class="text-3xl font-bold text-center mb-6">東京の天気</h2>
-    <div class="grid grid-cols-2 gap-4" id="weather">
-      <div class="bg-white/20 rounded-2xl p-5 text-center">
-        <p class="text-2xl font-bold">今日 日曜</p>
-        <p class="text-5xl my-3">Sunny 18°/10°</p>
-        <p>晴れ時々曇り</p>
-      </div>
-      <div class="bg-white/20 rounded-2xl p-5 text-center">
-        <p class="text-2xl font-bold">明日 月曜</p>
-        <p class="text-5xl my-3">Cloudy 16°/11°</p>
-        <p>曇り一時雨</p>
-      </div>
+    <!-- 今日は何の日？ -->
+    <div class="bg-white/10 rounded-3xl p-6 mb-8">
+      <h2 class="text-3xl font-bold mb-3">今日は何の日？</h2>
+      <p class="text-5xl mb-2">11月30日</p>
+      <p class="text-4xl">本みりんの日</p>
+      <p class="text-lg mt-4 opacity-90">いい（11）み（3）りん（0）の語呂合わせ！<br>今日は料理にみりんドバドバOK！</p>
     </div>
-  </div>
 
-  <!-- 為替＆日経 -->
-  <div class="mx-4 grid grid-cols-2 gap-4 mb-8">
-    <div class="bg-green-600/30 backdrop-blur-xl rounded-3xl p-6 text-center">
-      <p class="text-2xl font-bold">USD/JPY</p>
-      <p class="text-5xl font-black" id="fx">--</p>
-    </div>
-    <div class="bg-red-600/30 backdrop-blur-xl rounded-3xl p-6 text-center">
-      <p class="text-2xl font-bold">日経平均</p>
-      <p class="text-5xl font-black" id="nikkei">--</p>
-    </div>
-  </div>
-  <script>
-    fetch('https://query1.finance.yahoo.com/v8/finance/chart/JPY%3DX?range=1d').then(r=>r.json()).then(d=>document.getElementById('fx').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(2));
-    fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?range=1d').then(r=>r.json()).then(d=>document.getElementById('nikkei').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(0));
-  </script>
-
-  <!-- 今日のバカ画像 -->
-  <div class="mx-4 my-10 text-center">
-    <p class="text-3xl font-bold mb-6">今日のバカ画像（AI生成風）</p>
-    <img src="https://source.unsplash.com/random/800x1200/?meme,funny,japan,anime,kawaii" class="rounded-3xl shadow-2xl">
-  </div>
-
-  <!-- Xトレンド（画像付きカード） -->
-  <div class="mx-4 mb-8">
-    <h2 class="text-4xl font-bold text-center mb-6">Xトレンド</h2>
-    <div class="space-y-6">
-      <div class="bg-white/10 backdrop-blur-xl rounded-3xl overflow-hidden">
-        <img src="https://source.unsplash.com/random/800x450/?kpop,hyunjin" class="w-full">
-        <div class="p-5">
-          <p class="text-2xl font-bold">#Hyunjin MAMA</p>
-          <a href="https://x.com/search?q=Hyunjin&src=trend_click" target="_blank" class="block mt-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-3 rounded-2xl font-bold">ポスト見る</a>
+    <!-- 天気 -->
+    <div class="bg-white/10 rounded-3xl p-6 mb-8">
+      <h2 class="text-3xl font-bold mb-4">東京の天気</h2>
+      <div class="grid grid-cols-2 gap-4 text-2xl">
+        <div class="bg-white/20 rounded-2xl p-5">
+          <p class="font-bold">今日 日曜</p>
+          <p class="text-5xl my-2">Sunny</p>
+          <p>18℃ / 10℃</p>
         </div>
-      </div>
-      <div class="bg-white/10 backdrop-blur-xl rounded-3xl overflow-hidden">
-        <img src="https://source.unsplash.com/random/800x450/?bitcoin,crypto" class="w-full">
-        <div class="p-5">
-          <p class="text-2xl font-bold">Bitcoin $94K</p>
-          <a href="https://x.com/search?q=Bitcoin&src=trend_click" target="_blank" class="block mt-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-center py-3 rounded-2xl font-bold">ポスト見る</a>
+        <div class="bg-white/20 rounded-2xl p-5">
+          <p class="font-bold">明日 月曜</p>
+          <p class="text-5xl my-2">Cloudy</p>
+          <p>16℃ / 11℃</p>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- バカゲー誘導（ゲームはPC版へ） -->
-  <div class="mx-4 my-12 text-center">
-    <p class="text-4xl font-bold mb-6">神バカゲー</p>
-    <p class="text-xl opacity-90 mb-6">スマホだと重いからPCで遊んでね！</p>
-    <a href="https://kdfsbb5.github.io" class="inline-block bg-gradient-to-r from-cyan-500 to-purple-600 text-white px-10 py-5 rounded-full text-2xl font-bold shadow-2xl">
-      PC版でバカゲー遊ぶ
-    </a>
-  </div>
+    <!-- 為替・株 -->
+    <div class="grid grid-cols-2 gap-4 mb-8 text-2xl">
+      <div class="bg-green-600/30 rounded-3xl p-6">
+        <p class="font-bold">USD/JPY</p>
+        <p class="text-5xl font-black" id="fx">--</p>
+      </div>
+      <div class="bg-red-600/30 rounded-3xl p-6">
+        <p class="font-bold">日経平均</p>
+        <p class="text-5xl font-black" id="nikkei">--</p>
+      </div>
+    </div>
+    <script>
+      fetch('https://query1.finance.yahoo.com/v8/finance/chart/JPY%3DX?range=1d').then(r=>r.json()).then(d=>document.getElementById('fx').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(2));
+      fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?range=1d').then(r=>r.json()).then(d=>document.getElementById('nikkei').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(0));
+    </script>
 
-  <!-- 下部広告＋フッター -->
-  <div class="p-4">
-    <ins class="adsbygoogle" style="display:block" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
+    <!-- Xトレンド（シンプル） -->
+    <div class="bg-white/10 rounded-3xl p-6 mb-8">
+      <h2 class="text-3xl font-bold mb-5">Xトレンド</h2>
+      <div class="space-y-4 text-left text-xl">
+        <a href="https://x.com/search?q=Hyunjin&src=trend_click" class="block bg-white/20 rounded-2xl p-4">#Hyunjin MAMAソロ</a>
+        <a href="https://x.com/search?q=Bitcoin&src=trend_click" class="block bg-white/20 rounded-2xl p-4">Bitcoin $94K</a>
+        <a href="https://x.com/search?q=%24MASK&src=trend_click" class="block bg-white/20 rounded-2xl p-4">$MASK drawing trend</a>
+      </div>
+    </div>
 
-  <footer class="text-center py-8 text-gray-400">
-    © 2025 バカトレンドハブ | スマホ最適化済
-  </footer>
+    <!-- バカゲー誘導 -->
+    <div class="my-12">
+      <p class="text-4xl font-bold mb-6">神バカゲー</p>
+      <p class="text-xl mb-6 opacity-90">スマホだと重いからPCで遊んでね！</p>
+      <a href="https://kdfsbb5.github.io" class="inline-block bg-gradient-to-r from-cyan-500 to-purple-600 px-12 py-6 rounded-full text-3xl font-bold shadow-2xl">
+        PC版で遊ぶ
+      </a>
+    </div>
+
+    <!-- 広告 -->
+    <div class="my-8">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <footer class="text-gray-400 py-8 text-sm">
+      © 2025 バカトレンドハブ スマホ版（画像ゼロ・爆速仕様）
+    </footer>
+  </div>
 </body>
 </html>
