@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トレンドハブ・ワールド | Xの熱い話題 + 海外ニュース</title>
+  <meta name="description" content="XのリアルタイムトレンドとGrokニュースをキュレート。海外のホットトピックを日本語でサクッと！">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
+  <style> body { font-family: 'Hiragino Sans', sans-serif; } </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+  <!-- AdSense 上部 -->
+  <ins class="adsbygoogle w-full my-4" style="display:block" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-6xl font-black text-center my-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      トレンドハブ・ワールド
+    </h1>
+    <p class="text-xl text-center text-gray-700 mb-12">Xの今ホットな話題 + 海外ニュースをGrokがピックアップ！ 自動更新中...</p>
+
+    <!-- Xトレンドセクション (自動更新) -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-blue-600 mb-4">🔥 今Xでトレンド中！ (2025/11/30 更新)</h2>
+      <div id="trends" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- JSで自動挿入 -->
+      </div>
+      <script>
+        // Xトレンドサンプル (本番はX APIで置き換え: fetch('https://api.twitter.com/2/trends/place?id=1', {headers: {Authorization: 'Bearer YOUR_TOKEN'}}))
+        const trends = [
+          '#BNewEraBirthdayConcert: タイのコンサート熱狂！',
+          '#Hyunjin: MAMAソロステージが155Kポストで爆トレンド',
+          '#LoveXReality: 新ドラマのラブストーリーが話題',
+          'AI hacks: みんなが"発明したふり"してるAIトリック',
+          '$MASK drawing trend: Frieren風イラストが21Mビュー'
+        ];
+        const trendsEl = document.getElementById('trends');
+        trends.forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition';
+          div.innerHTML = `<h3 class="font-bold text-lg">${t}</h3><a href="https://x.com/search?q=${encodeURIComponent(t)}" target="_blank" class="text-blue-500">Xでチェック</a>`;
+          trendsEl.appendChild(div);
+        });
+        // 自動更新: setIntervalで1時間ごとリロード or APIコール
+      </script>
+    </section>
+
+    <!-- 海外ニュースピックアップ (Grokニュース風) -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-purple-600 mb-4">🌍 Grokニュース: 海外ハイライト</h2>
+      <div id="news" class="space-y-4">
+        <!-- JSサンプル (本番: XのGrokポストRSS or semantic search) -->
+      </div>
+      <script>
+        const news = [
+          'HyunjinのMAMAソロがXで大バズ！ K-Popの新時代？ (出典: Xトレンド)',
+          'RailsがX検索で支配！ ブロックチェーン革命の兆し？',
+          'Frieren drawing trendが21Mビュー: AIアート vs 手描き論争熱く',
+          'グローバルAIハックス: ポップコーン片手に楽しむドラマ満載',
+          'Belle Marianoの台北ショー: フィリピンアイドルがアジア制覇？'
+        ];
+        const newsEl = document.getElementById('news');
+        news.forEach(n => {
+          const div = document.createElement('div');
+          div.className = 'bg-white p-6 rounded-2xl shadow-lg';
+          div.innerHTML = `<p class="text-gray-800">${n}</p><a href="https://x.com/search?q=${encodeURIComponent(n.split(':')[0])}" target="_blank" class="text-purple-500">詳細 on X</a>`;
+          newsEl.appendChild(div);
+        });
+      </script>
+    </section>
+
+    <!-- キュレーション記事例 -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">📝 俺のキュレーション: 今日のピック</h2>
+      <article class="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 class="text-2xl font-bold mb-2">Xトレンドから見る2025のエンタメ未来</h3>
+        <p>#Hyunjinのソロが示すK-Popの進化... 海外ニュースの裏側を深掘り！</p>
+        <a href="#trends" class="text-blue-500">もっと読む</a>
+      </article>
+    </section>
+
+    <!-- AdSense 下部 -->
+    <div class="text-center my-12">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <footer class="text-center text-gray-600 py-8 border-t">
+      © 2025 トレンドハブ・ワールド | Grok & KDfsbb5 | <a href="https://kdfsbb5.github.io" class="text-blue-500">バカゲー研究所へ</a>
+    </footer>
+  </div>
+</body>
+</html>
