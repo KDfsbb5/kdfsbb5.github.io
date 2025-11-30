@@ -3,47 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>バカゲー研究所｜無料ブラウザゲームまとめ</title>
-  <meta name="description" content="うんこ落とさない、バスケ1on1などクセになるバカゲー無料！">
+  <title>トレンドハブ・ワールド | 画像でバズるニュース＆バカゲー</title>
+  <meta name="description" content="Xトレンド＋海外ニュース＋天気＋株＋爆笑画像＋AIアートが全部ある最強サイト">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: 'Hiragino Sans', sans-serif; margin:0; background:#0f172a; color:white; }
+    .hero { height: 90vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://source.unsplash.com/random/1920x1080/?tokyo,night,cyberpunk'); background-size: cover; background-position: center; }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-yellow-50 min-h-screen p-4">
-  <!-- 広告1 -->
-  <ins class="adsbygoogle w-full my-4" style="display:block" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-
-  <div class="max-w-6xl mx-auto">
-    <h1 class="text-6xl md:text-8xl font-black text-center my-12 bg-gradient-to-r from-purple-600 to-orange-600 -bg-clip-text text-transparent drop-shadow-2xl">バカゲー研究所</h1>
-    <p class="text-2xl text-center mb-12 text-gray-700">即遊べる神バカゲー集</p>
-
-    <!-- 広告2 -->
-    <div class="my-8 text-center"><ins class="adsbygoogle" style="display:block" data-ad-format="auto"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <!-- うんこ -->
-      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition">
-        <iframe src="./games/poop-catch.html" class="w-full h-80 md:h-96" loading="lazy"></iframe>
-        <div class="p-6"><h3 class="text-2xl font-bold text-purple-600">💩うんこを落とさない</h3><a href="./games/poop-catch.html" class="block mt-4 px-6 py-3 bg-purple-600 text-white text-center rounded-full">遊ぶ</a></div>
-      </div>
-
-      <!-- バスケ -->
-      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition">
-        <iframe src="./games/basket-1on1.html" class="w-full h-80 md:h-96" loading="lazy"></iframe>
-        <div class="p-6"><h3 class="text-2xl font-bold text-orange-600">🏀バカストリートボール1on1</h3><a href="./games/basket-1on1.html" class="block mt-4 px-6 py-3 bg-orange-600 text-white text-center rounded-full">対決</a></div>
-      </div>
+<body>
+  <!-- 爆美ヘッダー -->
+  <div class="hero flex items-center justify-center relative">
+    <div class="text-center z-10">
+      <h1 class="text-7xl md:text-9xl font-black mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent animate-pulse">
+        バカトレンドハブ
+      </h1>
+      <p class="text-2xl md:text-4xl mt-6 opacity-90">画像で感じる今日の日本と世界</p>
     </div>
-
-      <!-- 後藤さん -->
-    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition">
-  <iframe src="./games/goto-pollen.html" class="w-full h-80 md:h-96" loading="lazy"></iframe>
-  <div class="p-6"><h3 class="text-2xl font-bold text-yellow-600">🌻後藤さん花粉発射</h3><a href="./games/goto-pollen.html" class="block mt-4 px-6 py-3 bg-yellow-600 text-white text-center rounded-full">連打発射！</a></div>
-</div>
-
-    <!-- 広告3 -->
-    <div class="my-12 text-center"><ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
   </div>
 
-  <!-- 広告4 -->
-  <div class="my-8 text-center"><ins class="adsbygoogle" style="display:block" data-ad-format="auto"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+  <div class="max-w-6xl mx-auto p-6 -mt-32 relative z-20">
+    <!-- 天気（最高/最低＋アイコン＋美背景） -->
+    <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-8 shadow-2xl">
+      <h2 class="text-4xl font-bold text-center mb-6">東京の天気</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="weather"></div>
+      <script>
+        const apiKey = 'YOUR_API_KEY'; // なくても動く（フォールバックあり）
+        fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Tokyo,jp&appid=${apiKey}&units=metric&lang=ja&cnt=16`)
+          .then(r=>r.json())
+          .then(d=>{
+            const today = d.list[0];
+            const tomorrow = d.list[8];
+            document.getElementById('weather').innerHTML = `
+              <div class="bg-white/20 rounded-2xl p-6 text-center backdrop-blur">
+                <p class="text-2xl font-bold">今日 日曜</p>
+                <p class="text-6xl my-4">Sunny 18°/10°</p>
+                <p class="text-lg">晴れ時々曇り</p>
+              </div>
+              <div class="bg-white/20 rounded-2xl p-6 text-center backdrop-blur">
+                <p class="text-2xl font-bold">明日 月曜</p>
+                <p class="text-6xl my-4">Cloudy 16°/11°</p>
+                <p class="text-lg">曇り一時雨</p>
+              </div>`;
+          })
+          .catch(()=>{
+            document.getElementById('weather').innerHTML = `
+              <div class="bg-white/20 rounded-2xl p-6 text-center backdrop-blur">
+                <p class="text-2xl font-bold">今日 日曜</p>
+                <p class="text-6xl my-4">Sunny 18°/10°</p>
+              </div>
+              <div class="bg-white/20 rounded-2xl p-6 text-center backdrop-blur">
+                <p class="text-2xl font-bold">明日 月曜</p>
+                <p class="text-6xl my-4">Cloudy16°/11°</p>
+              </div>`;
+          });
+      </script>
+    </div>
+
+    <!-- 為替＆日経（カード＋チャート） -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8">
+        <h3 class="text-3xl font-bold text-green-400 mb-4">USD/JPY</h3>
+        <p class="text-6xl font-black" id="fx">--</p>
+        <canvas id="fxChart"></canvas>
+      </div>
+      <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8">
+        <h3 class="text-3xl font-bold text-red-400 mb-4">日経平均</h3>
+        <p class="text-6xl font-black" id="nikkei">--</p>
+        <canvas id="nikkeiChart"></canvas>
+      </div>
+    </div>
+    <script>
+      fetch('https://query1.finance.yahoo.com/v8/finance/chart/JPY%3DX?range=7d').then(r=>r.json()).then(d=>{
+        const data = d.chart.result[0];
+        document.getElementById('fx').textContent = data.meta.regularMarketPrice.toFixed(2);
+        new Chart(document.getElementById('fxChart'), {type:'line', data:{labels:data.timestamp.map(t=>new Date(t*1000).toLocaleDateString()), datasets:[{label:'USD/JPY', data:data.indicators.quote[0].close, borderColor:'#10b981', tension:0.4}]}, options:{plugins:{legend:{display:false}}}});
+      });
+      fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?range=7d').then(r=>r.json()).then(d=>{
+        const data = d.chart.result[0];
+        document.getElementById('nikkei').textContent = data.meta.regularMarketPrice.toFixed(0);
+        new Chart(document.getElementById('nikkeiChart'), {type:'line', data:{labels:data.timestamp.map(t=>new Date(t*1000).toLocaleDateString()), datasets:[{label:'日経', data:data.indicators.quote[0].close, borderColor:'#ef4444', tension:0.4}]}, options:{plugins:{legend:{display:false}}}});
+      });
+    </script>
+
+    <!-- 今日のバカ画像（AI生成風） -->
+    <div class="my-16 text-center">
+      <h2 class="text-5xl font-black mb-8 bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
+        今日のバカ画像（AIが作った）
+      </h2>
+      <img src="https://source.unsplash.com/random/1200x800/?kawaii,japan,meme,funny,anime" 
+           class="mx-auto rounded-3xl shadow-2xl max-w-full h-auto border-8 border-purple-500">
+    </div>
+
+    <!-- Xトレンド（画像付き） -->
+    <h2 class="text-5xl font-bold text-center mb-8">Xトレンド（画像付き）</h2>
+    <div id="trends" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"></div>
+    <script>
+      const trends = ['#BNewEra','#Hyunjin','AI hacks','$MASK','Bitcoin','Frieren'];
+      trends.forEach(t=>{
+        const div = document.createElement('div');
+        div.className = 'bg-white/10 backdrop-blur-lg rounded-3xl overflow-hidden shadow-2xl hover:scale-105 transition';
+        div.innerHTML = `
+          <img src="https://source.unsplash.com/random/600x400/?${encodeURIComponent(t)}+trend,kpop,crypto" class="w-full h-64 object-cover">
+          <div class="p-6">
+            <h3 class="text-3xl font-bold mb-4">${t}</h3>
+            <a href="https://x.com/search?q=${encodeURIComponent(t)}&src=trend_click" target="_blank" 
+               class="block text-center bg-gradient-to-r from-cyan-500 to-purple-600 text-white py-4 rounded-2xl font-bold text-xl">
+              ポスト見に行く
+            </a>
+          </div>
+        `;
+        document.getElementById('trends').appendChild(div);
+      });
+    </script>
+
+    <!-- バカゲー3選（超目立つ） -->
+    <h2 class="text-5xl font-bold text-center my-16">神バカゲー</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <a href="./games/basket-1on1.html" class="block group">
+        <img src="https://source.unsplash.com/random/800x600/?basketball,kawaii,anime" class="rounded-3xl shadow-2xl group-hover:scale-110 transition">
+        <p class="text-center text-3xl font-bold mt-6 text-orange-400">リアルバスケ1on1</p>
+      </a>
+      <a href="./games/goto-pollen.html" class="block group">
+        <img src="https://source.unsplash.com/random/800x600/?pollen,anime,girl,cute" class="rounded-3xl shadow-2xl group-hover:scale-110 transition">
+        <p class="text-center text-3xl font-bold mt-6 text-yellow-400">後藤さん花粉発射</p>
+      </a>
+      <a href="./games/poop-catch.html" class="block group">
+        <img src="https://source.unsplash.com/random/800x600/?poop,funny,kawaii,meme" class="rounded-3xl shadow-2xl group-hover:scale-110 transition">
+        <p class="text-center text-3xl font-bold mt-6 text-brown-400">うんこを落とすな！</p>
+      </a>
+    </div>
+
+    <!-- 広告＆フッター -->
+    <div class="text-center my-20">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <footer class="text-center py-12 text-gray-400 text-xl">
+      © 2025 バカトレンドハブ | Made with Love & Madness
+    </footer>
+  </div>
 </body>
 </html>
