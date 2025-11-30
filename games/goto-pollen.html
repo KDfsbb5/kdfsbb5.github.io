@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>後藤さん花粉発射ゲーム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
+  <style>
+    body { margin: 0; background: linear-gradient(to bottom, #87CEEB, #90EE90); font-family: sans-serif; overflow: hidden; }
+    canvas { display: block; margin: 20px auto; border: 5px solid #FFD700; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .ui { position: absolute; top: 10px; left: 10px; color: #FFD700; font-size: 28px; font-weight: bold; text-shadow: 2px 2px 4px #333; z-index: 10; }
+    .restart { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; font-size: 24px; background: linear-gradient(45deg, #FF69B4, #FFD700); color: #333; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 20px rgba(255,215,0,0.5); }
+    .restart:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 8px 25px rgba(255,215,0,0.7); }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="500"></canvas>
+  <div class="ui" id="score">スコア: 0</div>
+  <div class="ui" style="left: 500px; top: 10px;" id="health">体力: 100</div>
+  <button class="restart" id="restart" onclick="resetGame()" style="display:none;">🌸 リスタート！</button>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const healthEl = document.getElementById('health');
+    const restartBtn = document.getElementById('restart');
+
+    // 後藤さん（プレイヤー）
+    const gotou = { x: 400, y: 420, width: 60, height: 80, color: '#FF69B4' };
+
+    // 花粉弾配列
+    let pollens = [];
+
+    // 敵配列
+    let enemies = [];
+
+    let score = 0;
+    let health = 100;
+    let gameOver = false;
+    let pollenCooldown = 0; // 連打クールダウン
+
+    const keys = {};
+
+    // キーイベント
+    document.addEventListener('keydown', e => { keys[e.key] = true; });
+    document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+    function drawGotou() {
+      // 体
+      ctx.fillStyle = gotou.color;
+      ctx.fillRect(gotou.x - gotou.width/2, gotou.y - gotou.height, gotou.width, gotou.height);
+      // 鼻（花粉発射口）
+      ctx.fillStyle = '#FFD700';
+      ctx.fillRect(gotou.x - 5, gotou.y - 30, 10, 20);
+      // 目
+      ctx.fillStyle = '#000';
+      ctx.fillRect(gotou.x - 15, gotou.y - 50, 8, 8);
+      ctx.fillRect(gotou.x + 7, gotou.y - 50, 8, 8);
+      // 名前
+      ctx.fillStyle = '#FFF';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('後藤さん', gotou.x, gotou.y - gotou.height - 10);
+    }
+
+    function drawPollen(p) {
+      ctx.fillStyle = '#FFD700';
+      ctx.shadowColor = '#FFA500';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawEnemy(e) {
+      ctx.fillStyle = e.color;
+      ctx.shadowColor = '#FF0000';
+      ctx.shadowBlur = 5;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // 鼻水エフェクト
+      ctx.fillStyle = '#00FFFF';
+      ctx.fillRect(e.x - 3, e.y + e.r, 6, 10);
+    }
+
+    function update() {
+      if (gameOver) return;
+
+      // 花粉発射（スペース連打！）
+      if (keys[' '] && pollenCooldown <= 0) {
+        pollens.push({ x: gotou.x, y: gotou.y - 30, vx: 0, vy: -8, r: 6 });
+        pollenCooldown = 5; // 連打間隔（短めでクセになる）
+      }
+      if (pollenCooldown > 0) pollenCooldown--;
+
+      // 花粉更新
+      for (let i = pollens.length - 1; i >= 0; i--) {
+        let p = pollens[i];
+        p.y += p.vy;
+        p.vy += 0.1; // 少し弧を描く
+        p.x += p.vx + (Math.random() - 0.5) * 2; // 少し揺れ
+        if (p.y > 500) pollens.splice(i, 1);
+      }
+
+      // 敵生成（ランダム）
+      if (Math.random() < 0.03 + score * 0.0001) {
+        enemies.push({
+          x: Math.random() * 760 + 20,
+          y: -20,
+          vx: (Math.random() - 0.5) * 2,
+          vy: 2 + Math.random() * 2,
+          r: 20 + Math.random() * 15,
+          color: `hsl(${200 + Math.random()*60}, 70%, 50%)`
+        });
+      }
+
+      // 敵更新
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        let e = enemies[i];
+        e.x += e.vx;
+        e.y += e.vy;
+        e.vy += 0.1;
+        e.x = Math.max(e.r, Math.min(800 - e.r, e.x));
+
+        // 後藤さんに到達 → ダメージ
+        if (e.y + e.r > gotou.y - gotou.height) {
+          health -= 1;
+          healthEl.textContent = `体力: ${health}`;
+          enemies.splice(i, 1);
+          if (health <= 0) {
+            gameOver = true;
+            restartBtn.style.display = 'block';
+            return;
+          }
+          continue;
+        }
+
+        // 花粉衝突
+        for (let j = pollens.length - 1; j >= 0; j--) {
+          let p = pollens[j];
+          let dx = e.x - p.x;
+          let dy = e.y - p.y;
+          if (Math.sqrt(dx*dx + dy*dy) < e.r + p.r) {
+            score += Math.floor(e.r); // 大きい敵ほど高得点
+            scoreEl.textContent = `スコア: ${score}`;
+            enemies.splice(i, 1);
+            pollens.splice(j, 1);
+            break;
+          }
+        }
+
+        if (e.y > 500) enemies.splice(i, 1);
+      }
+
+      // 描画
+      ctx.clearRect(0, 0, 800, 500);
+      drawGotou();
+      pollens.forEach(drawPollen);
+      enemies.forEach(drawEnemy);
+
+      requestAnimationFrame(update);
+    }
+
+    function resetGame() {
+      score = 0;
+      health = 100;
+      pollens = [];
+      enemies = [];
+      gameOver = false;
+      scoreEl.textContent = 'スコア: 0';
+      healthEl.textContent = '体力: 100';
+      restartBtn.style.display = 'none';
+      pollenCooldown = 0;
+    }
+
+    // 広告
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
+    // スタート
+    update();
+  </script>
+
+  <!-- 下部広告 -->
+  <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);">
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9720843068756495" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+</body>
+</html>
