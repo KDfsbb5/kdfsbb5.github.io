@@ -3,169 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>バカゲー研究所</title>
+  <title>バカゲー研究所 - 世界一アホなブラウザゲーム集</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, sans-serif; }
-    canvas { image-rendering: pixelated; } /* クッキリ絵文字 */
+    body { font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; }
+    .card:hover { transform: scale(1.05); }
   </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col items-center justify-center p-8 text-gray-800">
-  
-  <!-- でっかいタイトル -->
-  <h1 class="text-7xl md:text-8xl lg:text-9xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-12 text-center drop-shadow-2xl">
-    バカゲー<br>研究所
-  </h1>
-  
-  <!-- ゲーム説明 -->
-  <div class="text-3xl font-bold mb-8 text-center bg-yellow-300 px-8 py-4 rounded-2xl shadow-2xl">
-    💩うんこを落とさないゲーム💩<br>
-    <span class="text-xl text-gray-600 block mt-2">矢印キー左右でバスケット移動！ 全部キャッチせよ！</span>
-  </div>
-  
-  <!-- ゲームキャンバス -->
-  <canvas 
-    id="gameCanvas" 
-    class="border-8 border-gray-400 rounded-3xl shadow-4xl bg-gradient-to-b from-sky-50 via-blue-50 to-indigo-100 w-full max-w-md h-auto block mx-auto cursor-pointer hover:shadow-5xl transition-all duration-200"
-    width="400" 
-    height="600"
-  ></canvas>
-  
-  <!-- スコア -->
-  <div id="score" class="text-4xl md:text-5xl font-black text-green-600 mt-8 mb-4 drop-shadow-lg">スコア: 0</div>
-  
-  <!-- ゲームオーバー -->
-  <div id="gameOver" class="hidden text-4xl md:text-5xl font-black text-red-600 mt-8 text-center drop-shadow-2xl animate-pulse">
-    💥ゲームオーバー💥<br>
-    <span class="text-2xl block mt-4 text-gray-700">スコア: <span id="finalScore">0</span></span>
-    <div class="text-xl mt-6 bg-blue-500 text-white px-8 py-4 rounded-2xl cursor-pointer hover:bg-blue-600 transition-all" onclick="location.reload()">
-      🔄 リスタート！
+<body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen py-12 px-4">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-6xl md:text-8xl font-black text-center mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-2xl">
+      バカゲー研究所
+    </h1>
+    <p class="text-2xl text-center text-gray-700 mb-16">5分で終わる神ゲーしか置いてない</p>
+
+    <!-- ゲームカード一覧 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- ゲーム1：うんこを落とさないゲーム -->
+      <div class="card bg-white rounded-3xl shadow-2xl overflow-hidden transition-all duration-300">
+        <iframe src="./games/poop-catch.html" class="w-full h-96 border-0" loading="lazy"></iframe>
+        <div class="p-6">
+          <h3 class="text-2xl font-bold text-purple-600">💩 うんこを落とさないゲーム</h3>
+          <p class="text-gray-600 mt-2">矢印キーで全部キャッチ！落ちたら即死</p>
+          <a href="./games/poop-catch.html" class="inline-block mt-4 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
+            フルスクリーンで遊ぶ
+          </a>
+        </div>
+      </div>
+
+      <!-- ここにどんどん追加していく！ -->
+      <!-- ゲーム2の枠（準備中） -->
+      <div class="card bg-white rounded-3xl shadow-2xl flex items-center justify-center flex-col p-12 text-center">
+        <div class="text-6xl mb-4">🌸</div>
+        <h3 class="text-2xl font-bold text-pink-600">秒速5センチで桜を避け続けるゲーム</h3>
+        <p class="text-gray-500 mt-4">準備中…（近日公開）</p>
+      </div>
+
+      <div class="card bg-white rounded-3xl shadow-2xl flex items-center justify-center flex-col p-12 text-center">
+        <div class="text-6xl mb-4">🌻</div>
+        <h3 class="text-2xl font-bold text-yellow-600">後藤さん花粉発射ゲーム</h3>
+        <p class="text-gray-500 mt-4">準備中…（近日公開）</p>
+      </div>
+
+      <!-- もっと追加したいだけ追加してOK！ -->
+
+    </div>
+
+    <div class="text-center mt-20 text-gray-600">
+      Made with ❤️ by Grok & KDfsbb5<br>
+      新作バカゲー毎日追加予定！
     </div>
   </div>
-  
-  <!-- フッター -->
-  <div class="mt-20 text-xl text-gray-500 text-center">
-    もっとバカゲー追加予定！<br>
-    Grokと協力制作 🐱‍💻
-  </div>
-
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const gameOverEl = document.getElementById('gameOver');
-    const finalScoreEl = document.getElementById('finalScore');
-
-    // ゲーム変数
-    let player = { x: 180, width: 50, height: 25 };
-    let poops = [];
-    let score = 0;
-    let gameOver = false;
-    let keys = {};
-    let spawnTimer = 0;
-    let spawnInterval = 120; // 最初ゆっくり (フレーム数)
-
-    // キー入力
-    document.addEventListener('keydown', (e) => { keys[e.key] = true; });
-    document.addEventListener('keyup', (e) => { keys[e.key] = false; });
-
-    // 描画関数
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // プレイヤーバスケット (緑の台)
-      ctx.fillStyle = '#10b981';
-      ctx.shadowColor = '#059669';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(player.x, canvas.height - player.height - 20, player.width, player.height);
-      ctx.shadowBlur = 0;
-
-      // うんこたち 💩
-      ctx.font = 'bold 32px serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = '#92400e';
-      ctx.shadowBlur = 5;
-      for (let p of poops) {
-        ctx.fillText('💩', p.x + p.width / 2, p.y + p.height / 2);
-      }
-      ctx.shadowBlur = 0;
-
-      // 遊び心: タイトルロゴみたいな
-      if (score > 0) {
-        ctx.font = '20px serif';
-        ctx.fillStyle = '#ef4444';
-        ctx.fillText(`ハイスコア更新中！🔥`, canvas.width / 2, 50);
-      }
-    }
-
-    // 更新関数
-    function update() {
-      if (gameOver) {
-        draw(); // 最後の状態を描画
-        return;
-      }
-
-      // プレイヤー移動 (スムーズ)
-      if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
-        player.x = Math.max(0, player.x - 6);
-      }
-      if (keys['ArrowRight'] || keys['d'] || keys['D']) {
-        player.x = Math.min(canvas.width - player.width, player.x + 6);
-      }
-
-      // うんこ生成 (徐々に速く)
-      spawnTimer++;
-      if (spawnTimer >= spawnInterval) {
-        poops.push({
-          x: Math.random() * (canvas.width - 25),
-          y: -25,
-          width: 25,
-          height: 25,
-          speed: 2.5 + (score * 0.05)
-        });
-        spawnTimer = 0;
-        spawnInterval = Math.max(40, spawnInterval - 0.5); // 加速！
-      }
-
-      // うんこ更新 & 衝突判定
-      for (let i = poops.length - 1; i >= 0; i--) {
-        let p = poops[i];
-        p.y += p.speed;
-
-        // キャッチ成功！
-        const playerTop = canvas.height - player.height - 15;
-        const playerBottom = canvas.height - 15;
-        if (p.y + p.height >= playerTop &&
-            p.y <= playerBottom &&
-            p.x + p.width > player.x &&
-            p.x < player.x + player.width) {
-          score++;
-          scoreEl.textContent = `スコア: ${score}`;
-          poops.splice(i, 1);
-          continue;
-        }
-
-        // 落下失敗 → ゲームオーバー
-        if (p.y > canvas.height) {
-          gameOver = true;
-          finalScoreEl.textContent = score;
-          gameOverEl.classList.remove('hidden');
-          return;
-        }
-      }
-
-      draw();
-      requestAnimationFrame(update);
-    }
-
-    // ゲームスタート (クリックで準備)
-    canvas.addEventListener('click', () => {
-      if (!gameOver) update();
-    });
-
-    // 自動スタート (1秒後)
-    setTimeout(() => update(), 1000);
-  </script>
 </body>
 </html>
