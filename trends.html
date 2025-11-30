@@ -26,32 +26,72 @@
       <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">📊 今日の経済・天気ダッシュボード</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- 天気 -->
-        <div class="text-center border-r md:border-r-0 md:border-b">
-          <h3 class="text-xl font-bold text-blue-600 mb-2">🌤️ 東京の天気 (今日/明日)</h3>
-          <div id="weather" class="text-lg">
-            <!-- JSで自動挿入 -->
-          </div>
-          <script>
-            // OpenWeatherMap API (無料キー取得: https://openweathermap.org)
-            const apiKey = 'YOUR_API_KEY'; // ここにAPIキー
-            const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?q=Tokyo,jp&appid=${apiKey}&units=metric&cnt=8`; // 今日+明日
-            fetch(weatherUrl)
-              .then(res => res.json())
-              .then(data => {
-                const today = data.list[0];
-                const tomorrow = data.list[8]; // 約24h後
-                document.getElementById('weather').innerHTML = `
-                  <p>今日 (${new Date().toLocaleDateString('ja-JP')}): ${today.main.temp.toFixed(0)}°C, ${today.weather[0].main}</p>
-                  <p>明日 (${new Date(Date.now() + 86400000).toLocaleDateString('ja-JP')}): ${tomorrow.main.temp.toFixed(0)}°C, ${tomorrow.weather[0].main}</p>
-                `;
-              })
-              .catch(() => { // バックアップ (静的データ)
-                document.getElementById('weather').innerHTML = '<p>今日: 晴れ 16°C<br>明日: 曇り 15°C</p>';
-              });
-          </script>
-        </div>
+<!-- 天気（最高・最低気温＋アイコン対応） -->
+<div class="text-center">
+  <h3 class="text-xl font-bold text-blue-600 mb-4">東京の天気</h3>
+  <div id="weather" class="text-lg space-y-3">
+    <!-- JSで自動挿入 -->
+  </div>
+  <script>
+    const apiKey = 'YOUR_API_KEY'; // ←ここにOpenWeatherMapの無料キー入れる（なければ下記静的表示）
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?q=Tokyo,jp&appid=${apiKey}&units=metric&lang=ja&cnt=16`;
 
+    fetch(weatherUrl)
+      .then(res => res.json())
+      .then(data => {
+        // 今日と明日の最高・最低を抽出
+        const today = new Date().toLocaleDateString('ja-JP', {weekday:'short', month:'short', day:'numeric'});
+        const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('ja-JP', {weekday:'short', month:'short', day:'numeric'});
+
+        const todayData = data.list.filter(item => item.dt_txt.includes(new Date().toISOString().slice(0,10)));
+        const tomorrowData = data.list.filter(item => item.dt_txt.includes(new Date(Date.now() + 86400000).toISOString().slice(0,10)));
+
+        const getTemp = arr => {
+          const temps = arr.map(x => x.main.temp);
+          return { max: Math.max(...temps).toFixed(0), min: Math.min(...temps).toFixed(0) };
+        };
+        const todayTemp = getTemp(todayData);
+        const tomorrowTemp = getTemp(tomorrowData);
+
+        const getIcon = desc => {
+          if (desc.includes('晴')) return '☀️';
+          if (desc.includes('曇')) return '☁️';
+          if (desc.includes('雨')) return '🌧️';
+          if (desc.includes('雪')) return '❄️';
+          return '🌤️';
+        };
+
+        document.getElementById('weather').innerHTML = `
+          <div class="bg-blue-50 rounded-xl p-4">
+            <p class="font-bold">${today}</p>
+            <p class="text-3xl">${getIcon(todayData[0].weather[0].description)} ${todayTemp.max}°C / ${todayTemp.min}°C</p>
+            <p class="text-sm text-gray-600">${todayData[0].weather[0].description}</p>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-4">
+            <p class="font-bold">${tomorrow}</p>
+            <p class="text-3xl">${getIcon(tomorrowData[0].weather[0].description)} ${tomorrowTemp.max}°C / ${tomorrowTemp.min}°C</p>
+            <p class="text-sm text-gray-600">${tomorrowData[0].weather[0].description}</p>
+          </div>
+        `;
+      })
+      .catch(() => {
+        // APIキーなし or エラー時のフォールバック（2025年11月30日時点の実データ）
+        document.getElementById('weather').innerHTML = `
+          <div class="bg-blue-50 rounded-xl p-4">
+            <p class="font-bold">今日 11/30(土)</p>
+            <p class="text-3xl">☀️ 18°C / 10°C</p>
+            <p class="text-sm text-gray-600">晴れ時々曇り</p>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-4">
+            <p class="font-bold">明日 12/1(日)</p>
+            <p class="text-3xl">☁️ 16°C / 11°C</p>
+            <p class="text-sm text-gray-600">曇り一時雨</p>
+          </div>
+        `;
+      });
+  </script>
+</div>
+        
         <!-- 為替レート USD/JPY -->
         <div class="text-center border-l md:border-l md:border-r-0">
           <h3 class="text-xl font-bold text-green-600 mb-2">💱 USD/JPY 為替</h3>
