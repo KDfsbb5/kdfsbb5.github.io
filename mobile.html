@@ -8,56 +8,58 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9720843068756495" crossorigin="anonymous"></script>
   <style>
-    body { margin:0; background:#1a0033; color:white; font-family:system-ui,sans-serif; min-height:100vh; }
+    body { margin:0; background:#1a0033; color:white; font-family:system-ui,sans-serif; }
+    .weather-card { padding: 16px 12px; }
   </style>
 </head>
 <body class="text-center">
 
-  <!-- 広告 -->
   <div class="p-3 bg-black/30">
     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9720843068756495" data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
-  <div class="p-6">
-    <h1 class="text-5xl font-black mb-8 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+  <div class="p-6 max-w-md mx-auto">
+    <h1 class="text-4xl font-black mb-8 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
       バカトレンドハブ
     </h1>
 
     <!-- 今日は何の日？ -->
     <div class="bg-white/10 rounded-3xl p-6 mb-8">
-      <h2 class="text-3xl font-bold mb-3">今日は何の日？</h2>
-      <p class="text-5xl mb-2">11月30日</p>
-      <p class="text-4xl">本みりんの日</p>
-      <p class="text-lg mt-4 opacity-90">いい（11）み（3）りん（0）の語呂合わせ！<br>今日は料理にみりんドバドバOK！</p>
+      <h2 class="text-2xl font-bold mb-3">今日は何の日？</h2>
+      <p class="text-3xl mb-2">11月30日</p>
+      <p class="text-2xl font-bold">本みりんの日</p>
+      <p class="text-base mt-3 opacity-90">いい（11）み（3）りん（0）の語呂合わせ！<br>今日は料理にみりんドバドバOK！</p>
     </div>
 
-    <!-- 天気 -->
-    <div class="bg-white/10 rounded-3xl p-6 mb-8">
-      <h2 class="text-3xl font-bold mb-4">東京の天気</h2>
-      <div class="grid grid-cols-2 gap-4 text-2xl">
-        <div class="bg-white/20 rounded-2xl p-5">
-          <p class="font-bold">今日 日曜</p>
-          <p class="text-5xl my-2">Sunny</p>
-          <p>18℃ / 10℃</p>
+    <!-- 天気（はみ出し完全解決！） -->
+    <div class="bg-white/10 rounded-3xl p-5 mb-8">
+      <h2 class="text-2xl font-bold mb-5">東京の天気</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white/20 rounded-2xl weather-card">
+          <p class="text-lg font-bold mb-1">今日 日曜</p>
+          <p class="text-4xl my-2">Sunny</p>
+          <p class="text-xl">18℃ / 10℃</p>
+          <p class="text-sm mt-2 opacity-80">晴れ時々曇り</p>
         </div>
-        <div class="bg-white/20 rounded-2xl p-5">
-          <p class="font-bold">明日 月曜</p>
-          <p class="text-5xl my-2">Cloudy</p>
-          <p>16℃ / 11℃</p>
+        <div class="bg-white/20 rounded-2xl weather-card">
+          <p class="text-lg font-bold mb-1">明日 月曜</p>
+          <p class="text-4xl my-2">Cloudy</p>
+          <p class="text-xl">16℃ / 11℃</p>
+          <p class="text-sm mt-2 opacity-80">曇り一時雨</p>
         </div>
       </div>
     </div>
 
     <!-- 為替・株 -->
-    <div class="grid grid-cols-2 gap-4 mb-8 text-2xl">
+    <div class="grid grid-cols-2 gap-4 mb-8">
       <div class="bg-green-600/30 rounded-3xl p-6">
-        <p class="font-bold">USD/JPY</p>
-        <p class="text-5xl font-black" id="fx">--</p>
+        <p class="text-lg font-bold">USD/JPY</p>
+        <p class="text-4xl font-black mt-2" id="fx">--</p>
       </div>
       <div class="bg-red-600/30 rounded-3xl p-6">
-        <p class="font-bold">日経平均</p>
-        <p class="text-5xl font-black" id="nikkei">--</p>
+        <p class="text-lg font-bold">日経平均</p>
+        <p class="text-4xl font-black mt-2" id="nikkei">--</p>
       </div>
     </div>
     <script>
@@ -65,33 +67,32 @@
       fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?range=1d').then(r=>r.json()).then(d=>document.getElementById('nikkei').textContent=d.chart.result[0].meta.regularMarketPrice.toFixed(0));
     </script>
 
-    <!-- Xトレンド（シンプル） -->
+    <!-- Xトレンド -->
     <div class="bg-white/10 rounded-3xl p-6 mb-8">
-      <h2 class="text-3xl font-bold mb-5">Xトレンド</h2>
-      <div class="space-y-4 text-left text-xl">
-        <a href="https://x.com/search?q=Hyunjin&src=trend_click" class="block bg-white/20 rounded-2xl p-4">#Hyunjin MAMAソロ</a>
-        <a href="https://x.com/search?q=Bitcoin&src=trend_click" class="block bg-white/20 rounded-2xl p-4">Bitcoin $94K</a>
-        <a href="https://x.com/search?q=%24MASK&src=trend_click" class="block bg-white/20 rounded-2xl p-4">$MASK drawing trend</a>
+      <h2 class="text-2xl font-bold mb-5">Xトレンド</h2>
+      <div class="space-y-3 text-left">
+        <a href="https://x.com/search?q=Hyunjin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">#Hyunjin MAMAソロ</a>
+        <a href="https://x.com/search?q=Bitcoin&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">Bitcoin $94K</a>
+        <a href="https://x.com/search?q=%24MASK&src=trend_click" class="block bg-white/20 rounded-2xl p-4 text-lg">$MASK drawing</a>
       </div>
     </div>
 
     <!-- バカゲー誘導 -->
-    <div class="my-12">
-      <p class="text-4xl font-bold mb-6">神バカゲー</p>
-      <p class="text-xl mb-6 opacity-90">スマホだと重いからPCで遊んでね！</p>
-      <a href="https://kdfsbb5.github.io" class="inline-block bg-gradient-to-r from-cyan-500 to-purple-600 px-12 py-6 rounded-full text-3xl font-bold shadow-2xl">
+    <div class="my-10">
+      <p class="text-3xl font-bold mb-4">神バカゲー</p>
+      <p class="text-lg mb-6 opacity-90">スマホだと重いからPCでね！</p>
+      <a href="https://kdfsbb5.github.io" class="inline-block bg-gradient-to-r from-cyan-500 to-purple-600 px-10 py-5 rounded-full text-2xl font-bold">
         PC版で遊ぶ
       </a>
     </div>
 
-    <!-- 広告 -->
     <div class="my-8">
       <ins class="adsbygoogle" style="display:block" data-ad-format="auto" data-full-width-responsive="true"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
     <footer class="text-gray-400 py-8 text-sm">
-      © 2025 バカトレンドハブ スマホ版（画像ゼロ・爆速仕様）
+      © 2025 バカトレンドハブ スマホ版（超安定仕様）
     </footer>
   </div>
 </body>
